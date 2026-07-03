@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Student Photo</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: #e2e8f0;
+            color: #1e293b;
+            line-height: 1.5;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        header {
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+            color: white;
+            padding: 2.5rem 1rem;
+            text-align: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 2rem;
+            position: relative;
+        }
+
+        .header-logo {
+            position: absolute;
+            left: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            height: 80px;
+            width: auto;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-badge {
+            position: absolute;
+            right: 1.5rem;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(255, 255, 255, 0.1);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #38bdf8;
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
+        }
+
+        @media (max-width: 768px) {
+            .header-logo {
+                position: static;
+                transform: none;
+                margin-bottom: 1rem;
+                height: 60px;
+            }
+            .header-badge {
+                position: static;
+                transform: none;
+                display: inline-block;
+                margin-top: 1rem;
+            }
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.5rem;
+        }
+
+        h1 span {
+            color: #38bdf8;
+        }
+
+        header p.subtitle {
+            color: #94a3b8;
+            font-size: 1.1rem;
+            font-weight: 400;
+        }
+
+        .search-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 1rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        form {
+            display: flex;
+            gap: 12px;
+            background: white;
+            padding: 1rem;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            flex-wrap: wrap;
+        }
+
+        .input-group {
+            position: relative;
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            transition: all 0.2s;
+            font-family: inherit;
+        }
+
+        .input-group input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        select {
+            padding: 12px 16px;
+            font-size: 1rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            outline: none;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-family: inherit;
+            color: #334155;
+            min-width: 150px;
+        }
+
+        select:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+        }
+
+        button {
+            padding: 12px 24px;
+            font-size: 1rem;
+            font-weight: 600;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-family: inherit;
+        }
+
+        button:hover {
+            background-color: #2563eb;
+        }
+
+        .results {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1rem;
+        }
+
+        .card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        .card-image-container {
+            width: 100%;
+            height: 320px;
+            background-color: #f1f5f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .card-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background-color: #ffffff;
+        }
+
+        .no-photo {
+            color: #94a3b8;
+            font-size: 0.875rem;
+            font-weight: 500;
+        }
+
+        .card-content {
+            padding: 1.5rem;
+            flex: 1;
+        }
+
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 1rem;
+        }
+
+        .card-detail {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+        }
+
+        .card-detail-icon {
+            width: 24px;
+            margin-right: 8px;
+            font-size: 1.1rem;
+            line-height: 1.2;
+        }
+
+        .card-detail-text {
+            color: #475569;
+            flex: 1;
+        }
+
+        .card-detail-text strong {
+            color: #334155;
+            font-weight: 600;
+        }
+
+        .not-found {
+            text-align: center;
+            margin-top: 4rem;
+            color: #64748b;
+        }
+
+        .not-found i {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .not-found p {
+            font-size: 1.25rem;
+            font-weight: 500;
+        }
+
+        .floating-search-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #3b82f6;
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+            cursor: pointer;
+            z-index: 1000;
+            border: none;
+            outline: none;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+        }
+
+        .floating-search-btn.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .floating-search-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.6);
+        }
+
+        main {
+            flex: 1;
+            width: 100%;
+        }
+
+        footer {
+            background-color: #0f172a;
+            color: #94a3b8;
+            text-align: center;
+            padding: 2.5rem 1rem;
+            margin-top: 4rem;
+            font-size: 0.95rem;
+        }
+    <p class="subtitle">Quickly find and connect with students.</p>
+    </header>
+
+    <main>        footer span.highlight {
+            color: #ec4899;
+            font-weight: 600;
+        }
+        
+        @media (max-width: 640px) {
+            form {
+                flex-direction: column;
+                gap: 16px;
+            }
+            .input-group, select, button {
+                width: 100%;
+            }
+            .results {
+                grid-template-columns: 1fr;
+                margin: 1.5rem auto;
+                gap: 16px;
+            }
+            h1 {
+                font-size: 2rem;
+            }
+            header p.subtitle {
+                font-size: 1rem;
+            }
+            .header-badge {
+                white-space: normal;
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+            .floating-search-btn {
+                bottom: 1.5rem;
+                right: 1.5rem;
+                width: 50px;
+                height: 50px;
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <img src="{{ url_for('static', filename='logo.jpg') }}" alt="Logo" class="header-logo">
+        <div class="header-content">
+            <h1>🔎 <span>KRO</span> Search</h1>
+            <p class="subtitle">Quickly find and connect with students.</p>
+        </div>
+        <div class="header-badge">✨ Updated website with new features!</div>
+    </header>
+
+    <div class="search-container">
+        <form method="post" id="searchForm">
+            <div class="input-group">
+                <input type="text" name="query" id="searchQuery" placeholder="Enter name, roll no, or phone..." value="{{ request.form.query if request.form.query else '' }}">
+            </div>
+            <select name="gender" id="searchGender">
+                <option value="All" {% if request.form.gender == 'All' %}selected{% endif %}>All Genders</option>
+                <option value="Male" {% if request.form.gender == 'Male' %}selected{% endif %}>Male</option>
+                <option value="Female" {% if request.form.gender == 'Female' %}selected{% endif %}>Female</option>
+            </select>
+            <select name="sort_by" id="searchSort">
+                <option value="Name_ASC" {% if request.form.sort_by == 'Name_ASC' %}selected{% endif %}>Name (A-Z)</option>
+                <option value="Name_DESC" {% if request.form.sort_by == 'Name_DESC' %}selected{% endif %}>Name (Z-A)</option>
+                <option value="RollNo_ASC" {% if request.form.sort_by == 'RollNo_ASC' %}selected{% endif %}>Roll No (Asc)</option>
+                <option value="RollNo_DESC" {% if request.form.sort_by == 'RollNo_DESC' %}selected{% endif %}>Roll No (Desc)</option>
+            </select>
+            <input type="hidden" name="offset" id="searchOffset" value="0">
+            <button type="submit">Search</button>
+        </form>
+    </div>
+
+    {% if result %}
+        <div class="results" id="resultsContainer">
+        {% include "cards.html" %}
+        </div>
+        
+        {% if total_results > limit %}
+        <div id="loadingIndicator" style="text-align: center; margin: 2rem 0; color: #475569; font-weight: 500; display: none;">
+            Loading more students...
+        </div>
+        {% endif %}
+
+        <script>
+            let currentOffset = {{ limit }};
+            const totalResults = {{ total_results }};
+            const limit = {{ limit }};
+            let isLoading = false;
+
+            window.addEventListener('scroll', () => {
+                // Check if we are near the bottom of the page
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 800) {
+                    if (!isLoading && currentOffset < totalResults) {
+                        loadMoreResults();
+                    }
+                }
+            });
+
+            async function loadMoreResults() {
+                isLoading = true;
+                const loadingIndicator = document.getElementById('loadingIndicator');
+                if(loadingIndicator) loadingIndicator.style.display = 'block';
+
+                const formData = new FormData();
+                formData.append('query', document.getElementById('searchQuery').value);
+                formData.append('gender', document.getElementById('searchGender').value);
+                formData.append('sort_by', document.getElementById('searchSort').value);
+                formData.append('offset', currentOffset);
+                formData.append('ajax', '1');
+
+                try {
+                    const response = await fetch('/', {
+                        method: 'POST',
+                        body: formData
+                    });
+                    const html = await response.text();
+                    
+                    const container = document.getElementById('resultsContainer');
+                    container.insertAdjacentHTML('beforeend', html);
+                    
+                    currentOffset += limit;
+                } catch (error) {
+                    console.error('Error loading more results:', error);
+                } finally {
+                    isLoading = false;
+                    if(loadingIndicator && currentOffset >= totalResults) {
+                        loadingIndicator.style.display = 'none';
+                    }
+                }
+            }
+        </script>
+    {% elif result == None and request.method == 'POST' %}
+        <div class="not-found">
+            <i>⚠️</i>
+            <p>No results found for your search.</p>
+        </div>
+    {% endif %}
+    </main>
+
+    <footer>
+        <p>Copyright &copy; 2026 <span class="highlight">KRO Search</span> Student Directory. All rights reserved.</p>
+        <p>Built for the community. Designed with ❤️</p>
+    </footer>
+
+    <!-- Floating Search Button -->
+    <button class="floating-search-btn" id="floatingSearchBtn" title="Back to Search">
+        🔍
+    </button>
+
+    <script>
+        const floatingBtn = document.getElementById('floatingSearchBtn');
+        const searchInput = document.querySelector('input[name="query"]');
+
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 300) {
+                floatingBtn.classList.add('visible');
+            } else {
+                floatingBtn.classList.remove('visible');
+            }
+        });
+
+        floatingBtn.addEventListener('click', () => {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                if (searchInput) searchInput.focus();
+            }, 500);
+        });
+    </script>
+</body>
+</html>

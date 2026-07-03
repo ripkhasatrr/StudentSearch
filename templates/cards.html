@@ -1,0 +1,49 @@
+{% if result %}
+    {% for row in result %}
+        <div class="card">
+            <div class="card-image-container">
+                {% if row['photo_filename'] %}
+                    <img src="{{ url_for('photos', filename=row['photo_filename']) }}" alt="Photo" loading="lazy">
+                {% else %}
+                    <div class="no-photo">No photo available</div>
+                {% endif %}
+            </div>
+            <div class="card-content">
+                <div class="card-title">{{ row['Name'] }}</div>
+                
+                <div class="card-detail">
+                    <div class="card-detail-icon">🎓</div>
+                    <div class="card-detail-text"><strong>Roll No:</strong> {{ row['RollNo'] }}</div>
+                </div>
+                <div class="card-detail">
+                    <div class="card-detail-icon">📘</div>
+                    <div class="card-detail-text"><strong>Class:</strong> {{ row['Class'] }}</div>
+                </div>
+                <div class="card-detail">
+                    <div class="card-detail-icon">✉️</div>
+                    <div class="card-detail-text" style="word-break: break-all;"><strong>Email:</strong> {{ row['Email'] }}</div>
+                </div>
+                <div class="card-detail">
+                    <div class="card-detail-icon">📅</div>
+                    <div class="card-detail-text"><strong>Year:</strong> {{ row['Year'] }}</div>
+                </div>
+                <div class="card-detail">
+                    <div class="card-detail-icon">👤</div>
+                    <div class="card-detail-text"><strong>Gender:</strong> {{ row['Gender'] }}</div>
+                </div>
+                <div class="card-detail">
+                    <div class="card-detail-icon">📞</div>
+                    <div class="card-detail-text"><strong>Phone:</strong> {{ row['Contact'] }}</div>
+                </div>
+                <div class="card-detail">
+                    <div class="card-detail-icon">🏙️</div>
+                    <div class="card-detail-text"><strong>City:</strong> {{ row.get('City of Residence', 'N/A') }}</div>
+                </div>
+                <div class="card-detail">
+                    <div class="card-detail-icon">🗺️</div>
+                    <div class="card-detail-text"><strong>State:</strong> {{ row.get('State of Residence', 'N/A') }}</div>
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+{% endif %}
